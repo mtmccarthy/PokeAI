@@ -11,9 +11,11 @@ import java.util.List;
 public class Trainer {
 
     ArrayList<Pokemon> pokemon;
+    int currentPokemon;
 
     public Trainer(ArrayList<Pokemon> party){
         this.pokemon = party;
+        this.currentPokemon = 0;
     }
 
     public boolean valid() {
@@ -36,12 +38,22 @@ public class Trainer {
     public Pokemon nextPokemon(){
         for(int i = 0; i < pokemon.size(); i++) {
             Pokemon poke = pokemon.get(i);
+            System.out.println();
+            System.out.println();
+            System.out.println(poke.getName() + "   " + poke.getStats().getHitPoints().getBase());
+
             if(poke.getStats().getHitPoints().getBase() > 0) {
-                poke.setIndex(i);
+                this.currentPokemon = i;
                 return poke; //SELECT SMARTER
             }
         }
         return null;
+    }
+
+    public Trainer setParty(int index, Pokemon poke){
+        this.pokemon.set(index, poke);
+
+        return this;
     }
 
 }

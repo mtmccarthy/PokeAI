@@ -45,22 +45,30 @@ public class Match {
     public void execute() throws InvalidModifier, InvalidPokemonError{
 
         while(gameOn) {
+            boolean changeA = false; //A new pokemon was sent out for playerA
+            boolean changeB = false; //A new pokemon was sent out for playerB
             AttackerDefenderPair pair = this.battle(currentA, currentB, playerA, playerB);
             gameOn = pair.isGameOn();
             currentA = pair.getAttacker();
             currentB = pair.getDefender();
             if(!gameOn) {
+
                 if(currentA.getStats().getHitPoints().getBase() <= 0){
-                    playerA.getParty().set(currentAIndex, currentA);
+
+                    playerA = playerA.setParty(playerA.currentPokemon, currentA);
                     currentA = playerA.nextPokemon();
+                    changeA = true;
 
                 }
                 else if(currentB.getStats().getHitPoints().getBase() <= 0) {
-                    playerB.getParty().set(currentBIndex, currentB);
+
+                    playerB = playerB.setParty(playerB.currentPokemon, currentB);
                     currentB = playerB.nextPokemon();
+                    changeB = true;
                 }
                 if(currentA == null && currentB == null) {
                     System.out.println("Game ended in a tie.");
+                    return;
                 }
                 else if(currentA == null) {
                     System.out.println("Player B won the game!");
@@ -72,7 +80,13 @@ public class Match {
                 }
                 else {
                     currentAIndex = currentA.getIndex();
+                    if(changeA){
+                        System.out.println("Player A sent out "+ currentA.getName() + " with index " + currentAIndex);
+                    }
                     currentBIndex = currentB.getIndex();
+                    if(changeB) {
+                        System.out.println("Player B sent out "+ currentB.getName() + " with index " + currentBIndex);
+                    }
                     gameOn = true;
                 }
             }
@@ -93,7 +107,10 @@ public class Match {
         PokeMove moveB = pokemonB.chooseMove(pokemonB);
 
         if(speedA > speedB){
+            System.out.println();
+            System.out.println();
             System.out.println(pokemonA.getName() + " went first");
+            System.out.println();
             System.out.println(pokemonA.getName() + " used " + moveA.getName());
             AttackerDefenderPair pair = pokemonA.attack(pokemonB, moveA); //A attacks B
             boolean keepGoing = pair.isGameOn();
@@ -102,15 +119,19 @@ public class Match {
                 System.out.println(pokemonB.getName() + " used " + moveB.getName());
                 AttackerDefenderPair newPair = pair.getDefender().attack(pair.getAttacker(), moveB);
 
-                return new AttackerDefenderPair(newPair.getAttacker(), newPair.getDefender());
+                return new AttackerDefenderPair(newPair.getDefender(), newPair.getAttacker(), newPair.isGameOn());
             }
             else {
+
                 return pair;
             }
 
         }
         else if(speedB > speedA){
+            System.out.println();
+            System.out.println();
             System.out.println(pokemonB.getName() + " went first");
+            System.out.println();
             System.out.println(pokemonB.getName() + " used " + moveB.getName());
             AttackerDefenderPair pair = pokemonB.attack(pokemonA, moveB); //A attacks B
             boolean keepGoing = pair.isGameOn();
@@ -118,17 +139,20 @@ public class Match {
             if(keepGoing) {
                 System.out.println(pokemonA.getName() + " used " + moveA.getName());
                 AttackerDefenderPair newPair = pair.getDefender().attack(pair.getAttacker(), moveA);
-                return new AttackerDefenderPair(newPair.getAttacker(), newPair.getDefender());
+                return new AttackerDefenderPair(newPair.getAttacker(), newPair.getDefender(), newPair.isGameOn());
             }
             else {
-                return new AttackerDefenderPair(pair.getDefender(), pair.getAttacker());
+                return new AttackerDefenderPair(pair.getDefender(), pair.getAttacker(), pair.isGameOn());
             }
 
         }
         else {
-            int x = (int) (Math.random() % 2);
+            int x = pokemonA.getRan().nextInt(2);
             if(x == 0){
+                System.out.println();
+                System.out.println();
                 System.out.println(pokemonA.getName() + " went first");
+                System.out.println();
                 System.out.println(pokemonA.getName() + " used " + moveA.getName());
                 AttackerDefenderPair pair = pokemonA.attack(pokemonB, moveA); //A attacks B
                 boolean keepGoing = pair.isGameOn();
@@ -136,7 +160,7 @@ public class Match {
                 if(keepGoing) {
                     System.out.println(pokemonB.getName() + " used " + moveB.getName());
                     AttackerDefenderPair newPair = pair.getDefender().attack(pair.getAttacker(), moveB);
-                    return new AttackerDefenderPair(newPair.getDefender(), newPair.getAttacker());
+                    return new AttackerDefenderPair(newPair.getDefender(), newPair.getAttacker(), newPair.isGameOn());
                 }
                 else {
                     return pair;
@@ -151,10 +175,10 @@ public class Match {
                 if(keepGoing) {
                     System.out.println(pokemonA.getName() + " used " + moveA.getName());
                     AttackerDefenderPair newPair = pair.getDefender().attack(pair.getAttacker(), moveA);
-                    return new AttackerDefenderPair(newPair.getAttacker(), newPair.getDefender());
+                    return new AttackerDefenderPair(newPair.getAttacker(), newPair.getDefender(), newPair.isGameOn());
                 }
                 else {
-                    return new AttackerDefenderPair(pair.getDefender(), pair.getAttacker());
+                    return new AttackerDefenderPair(pair.getDefender(), pair.getAttacker(), pair.isGameOn());
                 }
             }
         }
