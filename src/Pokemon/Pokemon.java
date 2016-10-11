@@ -25,6 +25,8 @@ public class Pokemon {
     PokeStatus status;
     PokeStats stats;
 
+    int index;
+
     Random ran;
 
     public Pokemon(PokeType type, String name) {
@@ -40,6 +42,16 @@ public class Pokemon {
         this.status = status;
         this.stats = stats;
         this.ran = new Random();
+    }
+
+    public Pokemon(PokeType type, String name, ArrayList moves, PokeStatus status, PokeStats stats, int index) {
+        this.type = type;
+        this.name = name;
+        this.moves = moves;
+        this.status = status;
+        this.stats = stats;
+        this.ran = new Random();
+        this.index = index;
     }
 
     public boolean valid(){
@@ -207,5 +219,10 @@ public class Pokemon {
 
     public Random getRan(){
         return this.ran;
+    }
+
+    public int getIndex(){return this.index;}
+    public void setIndex(int index){
+        this.index = index;
     }
 }

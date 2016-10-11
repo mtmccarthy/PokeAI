@@ -31,5 +31,16 @@ public class Trainer {
     public ArrayList getParty() {
         return this.pokemon;
     }
+    //Opportunity for AI here
+    public Pokemon nextPokemon(){
+        for(int i = 0; i < pokemon.size(); i++) {
+            Pokemon poke = pokemon.get(i);
+            if(poke.getStats().getHitPoints().getBase() > 0) {
+                poke.setIndex(i);
+                return poke; //SELECT SMARTER
+            }
+        }
+        return null;
+    }
 
 }
