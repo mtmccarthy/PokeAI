@@ -47,11 +47,20 @@ public class Pokemon {
     }
 
     public Pokemon normalSleep() throws InvalidPokemonError {
-        int counter = (int) Math.random() % 6; //SHOULD THIS BE 6?
+        int counter = this.getRan().nextInt(6); //SHOULD THIS BE 6?
         PokeStatus newStatus = new PokeStatus(PokeStatusType.SLEEP, counter);
 
-        return this.addStatus(this, newStatus);
-
+        if(this.status.getType().equals(PokeStatusType.SLEEP)){
+            return this;
+        }
+        else if(!this.status.getType().equals(PokeStatusType.NOSTATUS)){
+            System.out.println(this.getName() + " would have fell asleep. But it already has a status.");
+            return this;
+        }
+        else {
+            System.out.println(this.getName() + " is fast asleep.");
+            return this.addStatus(this, newStatus);
+        }
     }
 
     public Pokemon addStatus(Pokemon poke, PokeStatus status) throws InvalidPokemonError{
@@ -87,7 +96,17 @@ public class Pokemon {
         int counter = -1;
         PokeStatus newStatus = new PokeStatus(PokeStatusType.BURN, counter);
 
-        return this.addStatus(this, newStatus);
+        if(this.status.getType().equals(PokeStatusType.BURN)){
+            return this;
+        }
+        else if(!this.status.getType().equals(PokeStatusType.NOSTATUS)){
+            System.out.println(this.getName() + " would have been burned. But it already has a status.");
+            return this;
+        }
+        else {
+            System.out.println(this.getName() + " is burned.");
+            return this.addStatus(this, newStatus);
+        }
     }
 
     public Pokemon increaseStat(int scale, PokeStatType type) throws InvalidPokemonError, InvalidModifier {

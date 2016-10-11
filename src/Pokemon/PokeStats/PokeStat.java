@@ -68,10 +68,12 @@ public class PokeStat {
             throw new InvalidModifier();
         }
         else if(this.counter == 6) {
+            System.out.println("The "+type+" is maxed out.");
             return new PokeStat(this.base, this.type, this.counter);
         }
         int newCounter = this.counter + inc;
         if(newCounter > 6) {
+            System.out.println("The "+ type+ " is now maxed out");
             return new PokeStat(this.base, this.type, 6);
         }
         else {
@@ -84,10 +86,12 @@ public class PokeStat {
             throw new InvalidModifier();
         }
         else if(this.counter == -6) {
+            System.out.println("The " + type + " is as low as it can go.");
             return new PokeStat(this.base, this.type, this.counter);
         }
         int newCounter = this.counter - dec;
         if(newCounter < -6) {
+            System.out.println("The " + type + " is now as low is it can go.");
             return new PokeStat(this.base, this.type, -6);
         }
         else {
