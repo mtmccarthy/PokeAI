@@ -32,6 +32,7 @@ public class Trainer {
         return this.pokemon;
     }
     //Opportunity for AI here
+    //TODO
     public Pokemon nextPokemon(){
         for(int i = 0; i < pokemon.size(); i++) {
             Pokemon poke = pokemon.get(i);

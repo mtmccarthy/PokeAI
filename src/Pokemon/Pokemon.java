@@ -134,6 +134,7 @@ public class Pokemon {
     }
 
     //Opportunity for AI here
+    //TODO
     public PokeMove chooseMove(Pokemon defender){
         int nextMove = this.ran.nextInt(4);
 
