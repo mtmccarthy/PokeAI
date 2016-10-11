@@ -20,6 +20,9 @@ public class Match {
     Pokemon currentA;
     Pokemon currentB;
 
+    int currentAIndex;
+    int currentBIndex;
+
     boolean gameOn; //True if both players have at least one pokemon with some health
 
     public Match(Trainer a, Trainer b) {
@@ -27,6 +30,10 @@ public class Match {
         this.playerB = b;
         this.currentA = (Pokemon) this.playerA.getParty().get(0);
         this.currentB = (Pokemon) this.playerB.getParty().get(0);
+        this.currentA.setIndex(0);
+        this.currentB.setIndex(0);
+        this.currentAIndex = 0;
+        this.currentBIndex = 0;
 
         this.gameOn = true;
     }
@@ -42,6 +49,34 @@ public class Match {
             gameOn = pair.isGameOn();
             currentA = pair.getAttacker();
             currentB = pair.getDefender();
+            if(!gameOn) {
+                if(currentA.getStats().getHitPoints().getBase() <= 0){
+                    playerA.getParty().set(currentAIndex, currentA);
+                    currentA = playerA.nextPokemon();
+
+                }
+                else if(currentB.getStats().getHitPoints().getBase() <= 0) {
+                    playerB.getParty().set(currentBIndex, currentB);
+                    currentB = playerB.nextPokemon();
+                }
+                if(currentA == null && currentB == null) {
+                    System.out.println("Game ended in a tie.");
+                }
+                else if(currentA == null) {
+                    System.out.println("Player B won the game!");
+                    return;
+                }
+                else if(currentB == null) {
+                    System.out.println("Player A won the game");
+                    return;
+                }
+                else {
+                    currentAIndex = currentA.getIndex();
+                    currentBIndex = currentB.getIndex();
+                    gameOn = true;
+                }
+            }
+
         }
     }
 
