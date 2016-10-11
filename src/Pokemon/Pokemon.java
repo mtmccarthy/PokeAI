@@ -169,14 +169,14 @@ public class Pokemon {
 
         //Below deals with damage portion of an attack
         PokeStat currentHP = defender.stats.getHitPoints();
-        double modifer = defender.getModifier(move.getType());//TODO
+        double modifer = defender.getModifier(move.getType());
         //http://bulbapedia.bulbagarden.net/wiki/Damage
         //Set level constant to 5 for simplicity
         int damage;
         if(move.getDamage() == 0){
             damage = 0;
         }
-        else{
+        else {
             int level = 5;
             double interMediateDamage1 = (2*level+10)/250;
             double interMediateDamage2 = (this.stats.getAttack().getModifiedStat()/defender.stats.getDefense().getModifiedStat())*move.getDamage();
@@ -189,8 +189,9 @@ public class Pokemon {
         }
 
         System.out.println(this.getName()+" caused " + damage + " damage");
-        PokeStat newHP = currentHP.damage(currentHP.getType(), damage);//TODO
+        PokeStat newHP = currentHP.damage(currentHP.getType(), damage);
         System.out.println(defender.getName() + " now has " + newHP.getBase() +" health");
+
         PokeStats newDefenderStats =
                 new PokeStats(defender.stats.getAttack(), defender.stats.getDefense(), defender.stats.getSpecialAttack(),
                 defender.stats.getSpecialDefense(), defender.stats.getSpeed(), newHP);
@@ -225,5 +226,10 @@ public class Pokemon {
     public int getIndex(){return this.index;}
     public void setIndex(int index){
         this.index = index;
+    }
+
+    public Pokemon setName(String s){
+        this.name = s;
+        return this;
     }
 }

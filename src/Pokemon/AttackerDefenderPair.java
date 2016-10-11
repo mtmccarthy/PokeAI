@@ -38,13 +38,10 @@ public class AttackerDefenderPair {
 
 
         if(HPDefender.getBase() <= 0) {
-
             System.out.println(defender.getName() + " has fainted.");
             return new AttackerDefenderPair(attacker, defender, false);
         }
         else if(HPAttacker.getBase() <= 0) {
-            //HERE IS WHERE WE WILL ADD 4v4
-            //Game is over
             System.out.println(attacker.getName() + " has fainted.");
             return new AttackerDefenderPair(attacker, defender, false);
         }

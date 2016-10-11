@@ -16,18 +16,27 @@ public class Main {
 
     public static void main(String[] args) throws InvalidModifier, InvalidPokemonError{
         Examples examples = new Examples();
-        Pokemon charmander = examples.getCharmander();
-        Pokemon squirtle = examples.getSquirtle();
-        Pokemon bulbasaur = examples.getBulbasaur();
-        Pokemon pikachu = examples.getPikachu();
+        Pokemon charmanderA = examples.getCharmander().setName("Charmander A");
+        Pokemon squirtleA = examples.getSquirtle().setName("Squirtle A");
+        Pokemon bulbasaurA = examples.getBulbasaur().setName("Bulbasaur A");
+        Pokemon pikachuA = examples.getPikachu().setName("Pikachu A");
+
+        Pokemon charmanderB = examples.getCharmander().setName("Charmander B");
+        Pokemon squirtleB = examples.getSquirtle().setName("Squirtle B");
+        Pokemon bulbasaurB = examples.getBulbasaur().setName("Bulbasaur B");
+        Pokemon pikachuB = examples.getPikachu().setName("Pikachu B");
 
         ArrayList<Pokemon> partyA = new ArrayList<Pokemon>();
 
-        partyA.add(bulbasaur);
-        partyA.add(squirtle);
+        partyA.add(bulbasaurA);
+        partyA.add(charmanderA);
+        partyA.add(squirtleA);
+        partyA.add(pikachuA);
         ArrayList<Pokemon> partyB = new ArrayList<Pokemon>();
-        partyB.add(pikachu);
-        partyB.add(charmander);
+        partyB.add(squirtleB);
+        partyB.add(pikachuB);
+        partyB.add(charmanderB);
+        partyB.add(bulbasaurB);
 
         Trainer trainerA = new Trainer(partyA);
         Trainer trainerB = new Trainer(partyB);
