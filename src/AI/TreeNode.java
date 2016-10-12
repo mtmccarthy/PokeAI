@@ -23,7 +23,7 @@ public class TreeNode<T>{
 	        root.children = new ArrayList<TreeNode>();
 	    }
 
-	public Match get()
+	public Match getData()
 	{
 		return data;
 	}

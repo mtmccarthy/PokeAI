@@ -22,7 +22,7 @@ import Error.InvalidModifier;
 public class Pokemon {
 
     PokeType type;
-    ArrayList<PokeMove> moves;
+    private ArrayList<PokeMove> moves;
     String name;
     PokeStatus status;
     PokeStats stats;
@@ -35,13 +35,13 @@ public class Pokemon {
     public Pokemon(PokeType type, String name) {
         this.type = type;
         this.name = name;
-        this.moves = new ArrayList<>();
+        this.setMoves(new ArrayList<>());
         this.ran = new Random();
     }
     public Pokemon(PokeType type, String name, ArrayList moves, PokeStatus status, PokeStats stats) {
         this.type = type;
         this.name = name;
-        this.moves = moves;
+        this.setMoves(moves);
         this.status = status;
         this.stats = stats;
         this.ran = new Random();
@@ -50,7 +50,7 @@ public class Pokemon {
     public Pokemon(PokeType type, String name, ArrayList moves, PokeStatus status, PokeStats stats, int index) {
         this.type = type;
         this.name = name;
-        this.moves = moves;
+        this.setMoves(moves);
         this.status = status;
         this.stats = stats;
         this.ran = new Random();
@@ -79,7 +79,7 @@ public class Pokemon {
     }
 
     public Pokemon addStatus(Pokemon poke, PokeStatus status) throws InvalidPokemonError{
-        Pokemon newPoke = new Pokemon(poke.type, poke.name, poke.moves, status, poke.stats);
+        Pokemon newPoke = new Pokemon(poke.type, poke.name, poke.getMoves(), status, poke.stats);
         if(!newPoke.valid()) {
             throw new InvalidPokemonError();
         }
@@ -125,13 +125,13 @@ public class Pokemon {
     }
 
     public Pokemon increaseStat(int scale, PokeStatType type) throws InvalidPokemonError, InvalidModifier {
-        Pokemon newPokemon = new Pokemon(this.type, this.name, this.moves, this.status, this.stats.increaseStat(type, scale));
+        Pokemon newPokemon = new Pokemon(this.type, this.name, this.getMoves(), this.status, this.stats.increaseStat(type, scale));
 
         return newPokemon;
     }
 
     public Pokemon decreaseStat(int scale, PokeStatType type) throws InvalidPokemonError, InvalidModifier {
-        Pokemon newPokemon = new Pokemon(this.type, this.name, this.moves, this.status, this.stats.decreaseStat(type, scale));
+        Pokemon newPokemon = new Pokemon(this.type, this.name, this.getMoves(), this.status, this.stats.decreaseStat(type, scale));
 
         return newPokemon;
     }
@@ -143,7 +143,7 @@ public class Pokemon {
     	em.loadOptions(m, 3);
         int nextMove = em.getMove();;
 
-        return this.moves.get(nextMove);
+        return this.getMoves().get(nextMove);
     }
 
     public AttackerDefenderPair attack(Pokemon defender, PokeMove move) throws InvalidPokemonError, InvalidModifier{
@@ -200,7 +200,7 @@ public class Pokemon {
         PokeStats newDefenderStats =
                 new PokeStats(defender.stats.getAttack(), defender.stats.getDefense(), defender.stats.getSpecialAttack(),
                 defender.stats.getSpecialDefense(), defender.stats.getSpeed(), newHP);
-        Pokemon newDefender = new Pokemon(defender.type, defender.name, defender.moves, defender.status, newDefenderStats);
+        Pokemon newDefender = new Pokemon(defender.type, defender.name, defender.getMoves(), defender.status, newDefenderStats);
 
 
         //Below deals with an additional effect of a move
@@ -237,4 +237,10 @@ public class Pokemon {
         this.name = s;
         return this;
     }
+	public ArrayList<PokeMove> getMoves() {
+		return moves;
+	}
+	public void setMoves(ArrayList<PokeMove> moves) {
+		this.moves = moves;
+	}
 }

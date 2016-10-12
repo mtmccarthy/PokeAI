@@ -18,7 +18,7 @@ public class Match {
     Trainer playerA;
     Trainer playerB;
 
-    Pokemon currentA;
+    private Pokemon currentA;
     Pokemon currentB;
 
     int currentAIndex;
@@ -29,11 +29,11 @@ public class Match {
     public Match(Trainer a, Trainer b) {
         this.playerA = a;
         this.playerB = b;
-        this.currentA = (Pokemon) this.playerA.getParty().get(0);
-        this.currentA.m = this;
+        this.setCurrentA((Pokemon) this.playerA.getParty().get(0));
+        this.getCurrentA().m = this;
         this.currentB = (Pokemon) this.playerB.getParty().get(0);
         this.currentB.m = this;
-        this.currentA.setIndex(0);
+        this.getCurrentA().setIndex(0);
         this.currentB.setIndex(0);
         this.currentAIndex = 0;
         this.currentBIndex = 0;
@@ -50,16 +50,16 @@ public class Match {
         while(gameOn) {
             boolean changeA = false; //A new pokemon was sent out for playerA
             boolean changeB = false; //A new pokemon was sent out for playerB
-            AttackerDefenderPair pair = this.battle(currentA, currentB, playerA, playerB);
+            AttackerDefenderPair pair = this.battle(getCurrentA(), currentB, playerA, playerB);
             gameOn = pair.isGameOn();
-            currentA = pair.getAttacker();
+            setCurrentA(pair.getAttacker());
             currentB = pair.getDefender();
             if(!gameOn) {
 
-                if(currentA.getStats().getHitPoints().getBase() <= 0){
+                if(getCurrentA().getStats().getHitPoints().getBase() <= 0){
 
-                    playerA = playerA.setParty(playerA.currentPokemon, currentA);
-                    currentA = playerA.nextPokemon();
+                    playerA = playerA.setParty(playerA.currentPokemon, getCurrentA());
+                    setCurrentA(playerA.nextPokemon());
                     changeA = true;
 
                 }
@@ -69,11 +69,11 @@ public class Match {
                     currentB = playerB.nextPokemon();
                     changeB = true;
                 }
-                if(currentA == null && currentB == null) {
+                if(getCurrentA() == null && currentB == null) {
                     System.out.println("Game ended in a tie.");
                     return;
                 }
-                else if(currentA == null) {
+                else if(getCurrentA() == null) {
                     System.out.println("Player B won the game!");
                     return;
                 }
@@ -82,10 +82,10 @@ public class Match {
                     return;
                 }
                 else {
-                    currentAIndex = currentA.getIndex();
-                    this.currentA.m = this;
+                    currentAIndex = getCurrentA().getIndex();
+                    this.getCurrentA().m = this;
                     if(changeA){
-                        System.out.println("Player A sent out "+ currentA.getName() + " with index " + currentAIndex);
+                        System.out.println("Player A sent out "+ getCurrentA().getName() + " with index " + currentAIndex);
                     }
                     currentBIndex = currentB.getIndex();
                     this.currentB.m = this;
@@ -194,5 +194,21 @@ public class Match {
 			playerA.getHeuristic();
 		else
 			playerB.getHeuristic();
+	}
+
+	public Pokemon getCurrentA() {
+		return currentA;
+	}
+
+	public void setCurrentA(Pokemon A) {
+		this.currentA = A;
+	}
+
+	public Pokemon getCurrentB() {
+		return currentB;
+	}
+	
+	public void setCurrentB(Pokemon B){
+		this.currentB = B;
 	}
 }
