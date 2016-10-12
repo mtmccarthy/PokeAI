@@ -38,9 +38,6 @@ public class Trainer {
     public Pokemon nextPokemon(){
         for(int i = 0; i < pokemon.size(); i++) {
             Pokemon poke = pokemon.get(i);
-            System.out.println();
-            System.out.println();
-            System.out.println(poke.getName() + "   " + poke.getStats().getHitPoints().getBase());
 
             if(poke.getStats().getHitPoints().getBase() > 0) {
                 this.currentPokemon = i;
