@@ -50,4 +50,9 @@ public class PokeMove {
     public String getName(){
         return this.name;
     }
+
+	public int getHeuristic() {
+		
+		return 0;
+	}
 }

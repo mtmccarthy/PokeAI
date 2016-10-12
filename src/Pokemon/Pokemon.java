@@ -11,6 +11,8 @@ import Pokemon.PokeStatus.PokeStatusType;
 import java.util.ArrayList;
 import java.util.Random;
 
+import AI.ExpectedMiniMax;
+import Battle.Match;
 import Error.InvalidPokemonError;
 import Error.InvalidModifier;
 
@@ -24,6 +26,7 @@ public class Pokemon {
     String name;
     PokeStatus status;
     PokeStats stats;
+    public Match m;
 
     int index;
 
@@ -136,7 +139,9 @@ public class Pokemon {
     //Opportunity for AI here
     //TODO
     public PokeMove chooseMove(Pokemon defender){
-        int nextMove = this.ran.nextInt(4);
+    	ExpectedMiniMax em = new ExpectedMiniMax();
+    	em.loadOptions(m, 3);
+        int nextMove = em.getMove();;
 
         return this.moves.get(nextMove);
     }

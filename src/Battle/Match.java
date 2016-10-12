@@ -13,7 +13,8 @@ import Pokemon.AttackerDefenderPair;
  * Created by mtmccarthy on 10/10/16.
  */
 public class Match {
-
+	
+	public boolean isPlayerAGoing;
     Trainer playerA;
     Trainer playerB;
 
@@ -29,7 +30,9 @@ public class Match {
         this.playerA = a;
         this.playerB = b;
         this.currentA = (Pokemon) this.playerA.getParty().get(0);
+        this.currentA.m = this;
         this.currentB = (Pokemon) this.playerB.getParty().get(0);
+        this.currentB.m = this;
         this.currentA.setIndex(0);
         this.currentB.setIndex(0);
         this.currentAIndex = 0;
@@ -80,10 +83,12 @@ public class Match {
                 }
                 else {
                     currentAIndex = currentA.getIndex();
+                    this.currentA.m = this;
                     if(changeA){
                         System.out.println("Player A sent out "+ currentA.getName() + " with index " + currentAIndex);
                     }
                     currentBIndex = currentB.getIndex();
+                    this.currentB.m = this;
                     if(changeB) {
                         System.out.println("Player B sent out "+ currentB.getName() + " with index " + currentBIndex);
                     }
@@ -183,4 +188,11 @@ public class Match {
             }
         }
     }
+
+	public Integer getHeuristic() {
+		if (isPlayerAGoing==true)
+			playerA.getHeuristic();
+		else
+			playerB.getHeuristic();
+	}
 }
