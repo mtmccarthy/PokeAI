@@ -18,6 +18,7 @@ import Error.InvalidModifier;
 
 /**
  * Created by mtmccarthy on 10/10/16.
+ * Edited by Jacob Link
  */
 public class Pokemon {
 

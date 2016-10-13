@@ -1,5 +1,7 @@
 package AI;
 
+import java.util.Random;
+
 import Battle.Match;
 import Error.InvalidModifier;
 import Error.InvalidPokemonError;
@@ -44,32 +46,75 @@ public class ExpectedMiniMax {
 		return alpha;
 	}
 
-	//adds all 4 children to a node
-	public void loadOptions(TreeNode node){
+	//builds tree, given depth and match state
+	public void loadOptions(Match m, int depth){
+		//make root node
+		TreeNode node = new TreeNode(null, m);
+		
+		//currently can build up to depth 4
+		//not set up efficiently but should build out fully
+		switch (depth){
+		case 0:
+			break;
+		case 1:
+			buildChildren(node);
+			break;
+		case 2:
+			buildChildren(node);
+			for(int i = 0; i<4;i++){
+				buildChildren((TreeNode) node.children.get(i));
+			}
+			break;
+		case 3:
+			buildChildren(node);
+			for(int i = 0; i<4;i++){
+				buildChildren((TreeNode) node.children.get(i));
+				for(int j = 0;j<4;j++){
+					buildChildren((TreeNode)((TreeNode)node.children.get(i)).children.get(j));
+				}
+			}
+			break;
+		case 4:
+			buildChildren(node);
+			for(int i = 0; i<4;i++){
+				buildChildren((TreeNode) node.children.get(i));
+				for(int j = 0;j<4;j++){
+					buildChildren((TreeNode)((TreeNode)node.children.get(i)).children.get(j));
+					for(int k =0;k<4;k++){
+						buildChildren((TreeNode)((TreeNode)((TreeNode)node.children.get(i)).children.get(j)).children.get(k));
+					}
+				}
+			}
+			break;
+		}
+		
+		this.root = node;
+	}
+	
+	//build 4 children for a node
+	public void buildChildren(TreeNode node){
 		//build node for each possible move
 		//creates child as copy of current node, then runs move 0-3 on opposing pokemon
 		// in that node
 		
 		// CHILD 1 
-		TreeNode c1 = new TreeNode(node, null);
-		c1.data = root.data;
+		TreeNode c1 = new TreeNode(node, node.getData());
 		node.children.add(c1);
 		
 		// CHILD 2
-		TreeNode c2 = new TreeNode(node, null);
-		c2.data = root.data;
+		TreeNode c2 = new TreeNode(node, node.getData());
 		node.children.add(c2);
 
 		// CHILD 3
-		TreeNode c3 = new TreeNode(node, null);
-		c3.data = root.data;
+		TreeNode c3 = new TreeNode(node, node.getData());
 		node.children.add(c3);
 		
 		// CHILD 4
-		TreeNode c4 = new TreeNode(node, null);
-		c4.data = root.data;
+		TreeNode c4 = new TreeNode(node, node.getData());
 		node.children.add(c4);
 			
+		//ADD CHECKS FOR GAMEOVER AFTER MOVE
+		
 		//if player a, run a's moves
 		if(node.getData().isPlayerAGoing == true){
 			//run move in child
@@ -109,6 +154,15 @@ public class ExpectedMiniMax {
 				child.data.setCurrentB(b);
 			}
 		}
-		
 	}
+
+	//get move
+	//stubbed to choose randomly
+	//when implementing, base off of expected minimax value
+	public int getMove(){
+		
+		return (int) Math.random() * 4;
+	}
+
 }
+

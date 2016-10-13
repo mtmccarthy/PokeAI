@@ -19,8 +19,8 @@ public class TreeNode<T>{
 
 	    public TreeNode(TreeNode root, Match data) {
 	    	this.root = root;
-	        root.data = data;
-	        root.children = new ArrayList<TreeNode>();
+	        this.data = data;
+	        this.children = new ArrayList<TreeNode>();
 	    }
 
 	public Match getData()

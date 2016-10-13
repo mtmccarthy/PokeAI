@@ -1,16 +1,17 @@
 package Battle;
 
+import java.util.ArrayList;
+
 import PokeMove.PokeMove;
 import Pokemon.PokeStats.PokeStat;
 import Pokemon.Pokemon;
-
 import Error.InvalidModifier;
 import Error.InvalidPokemonError;
-
 import Pokemon.AttackerDefenderPair;
 
 /**
  * Created by mtmccarthy on 10/10/16.
+ * Edited by Jacob Link
  */
 public class Match {
 	
@@ -37,7 +38,10 @@ public class Match {
         this.currentB.setIndex(0);
         this.currentAIndex = 0;
         this.currentBIndex = 0;
-
+        
+        //start off as true for ai calculations
+        this.isPlayerAGoing = true;
+        
         this.gameOn = true;
     }
 
@@ -190,10 +194,41 @@ public class Match {
     }
 
 	public Integer getHeuristic() {
-		if (isPlayerAGoing==true)
-			playerA.getHeuristic();
-		else
-			playerB.getHeuristic();
+		ArrayList<Pokemon> pokelist; 
+		int heuristic = 0;
+		
+		if (isPlayerAGoing==true){
+			//if a is going, heuristic is health of a's pokemon - health of b's pokemon
+			for(int i = 0; i<playerA.currentPokemon; i++){
+				//set pokelist to our pokemon
+				pokelist = playerA.getParty();
+				//add to heuristic for our pokemon's hp
+				heuristic = heuristic + pokelist.get(i).getStats().getHitPoints().getBase();
+			}
+			for(int i = 0; i<playerB.currentPokemon; i++){
+				//set pokelist to enemy's pokemon
+				pokelist = playerB.getParty();
+				//subtract from heuristic for their hp
+				heuristic = heuristic - pokelist.get(i).getStats().getHitPoints().getBase();
+			}
+		}
+		else{
+			//if b is going, heuristic is opposite
+			for(int i = 0; i<playerA.currentPokemon; i++){
+				//set pokelist to enemy's pokemon
+				pokelist = playerA.getParty();
+				//subtract from heuristic for their pokemon's hp
+				heuristic = heuristic - pokelist.get(i).getStats().getHitPoints().getBase();
+			}
+			for(int i = 0; i<playerB.currentPokemon; i++){
+				//set pokelist to our pokemon
+				pokelist = playerB.getParty();
+				//add to heuristic for our pokemon's hp
+				heuristic = heuristic + pokelist.get(i).getStats().getHitPoints().getBase();
+			}
+		}
+		
+		return heuristic;
 	}
 
 	public Pokemon getCurrentA() {
