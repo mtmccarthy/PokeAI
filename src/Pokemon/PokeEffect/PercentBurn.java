@@ -16,7 +16,7 @@ public class PercentBurn implements PokeEffect{
         this.percent = percent;
     }
     @Override
-    public AttackerDefenderPair effect(Pokemon attacker, Pokemon defender) throws InvalidPokemonError, InvalidPokemonError {
+    public AttackerDefenderPair effect(boolean displayPrompt, Pokemon attacker, Pokemon defender) throws InvalidPokemonError, InvalidPokemonError {
 
         int modulo = 100/ this.percent;
 
@@ -25,11 +25,11 @@ public class PercentBurn implements PokeEffect{
         AttackerDefenderPair pair;
 
         if(rannum == 0) {
-            Pokemon newDefender = defender.burn();
-            pair = new AttackerDefenderPair(attacker, newDefender);
+            Pokemon newDefender = defender.burn(displayPrompt);
+            pair = new AttackerDefenderPair(displayPrompt, attacker, newDefender);
         }
         else {
-            pair = new AttackerDefenderPair(attacker, defender);
+            pair = new AttackerDefenderPair(displayPrompt, attacker, defender);
         }
 
 

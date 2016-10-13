@@ -1,5 +1,6 @@
 package Pokemon;
 
+import AI.TreeNode;
 import PokeMove.PokeMove;
 import Pokemon.PokeEffect.PokeEffect;
 import Pokemon.PokeStats.PokeStat;
@@ -62,7 +63,7 @@ public class Pokemon {
         return true;
     }
 
-    public Pokemon normalSleep() throws InvalidPokemonError {
+    public Pokemon normalSleep(boolean displayPrompt) throws InvalidPokemonError {
         int counter = this.getRan().nextInt(6); //SHOULD THIS BE 6?
         PokeStatus newStatus = new PokeStatus(PokeStatusType.SLEEP, counter);
 
@@ -70,11 +71,15 @@ public class Pokemon {
             return this;
         }
         else if(!this.status.getType().equals(PokeStatusType.NOSTATUS)){
-            System.out.println(this.getName() + " would have fell asleep. But it already has a status.");
+            if(displayPrompt) {
+                System.out.println(this.getName() + " would have fell asleep. But it already has a status.");
+            }
             return this;
         }
         else {
-            System.out.println(this.getName() + " is fast asleep.");
+            if(displayPrompt) {
+                System.out.println(this.getName() + " is fast asleep.");
+            }
             return this.addStatus(this, newStatus);
         }
     }
@@ -89,7 +94,7 @@ public class Pokemon {
         }
     }
 
-    public Pokemon paralyze() throws InvalidPokemonError{
+    public Pokemon paralyze(boolean displayPrompt) throws InvalidPokemonError{
         int counter = -1; //Indefinite
         PokeStatus newStatus = new PokeStatus(PokeStatusType.PARALYSIS, counter);
 
@@ -97,18 +102,22 @@ public class Pokemon {
             return this;
         }
         else if(!this.status.getType().equals(PokeStatusType.NOSTATUS)){
-            System.out.println(this.getName() + " would have been paralyzed. But it already has a status.");
+            if(displayPrompt) {
+                System.out.println(this.getName() + " would have been paralyzed. But it already has a status.");
+            }
             return this;
         }
         else {
-            System.out.println(this.getName() + " is paralyzed.");
+            if(displayPrompt) {
+                System.out.println(this.getName() + " is paralyzed.");
+            }
             return this.addStatus(this, newStatus);
         }
 
 
     }
 
-    public Pokemon burn() throws InvalidPokemonError {
+    public Pokemon burn(boolean displayPrompt) throws InvalidPokemonError {
         int counter = -1;
         PokeStatus newStatus = new PokeStatus(PokeStatusType.BURN, counter);
 
@@ -116,57 +125,68 @@ public class Pokemon {
             return this;
         }
         else if(!this.status.getType().equals(PokeStatusType.NOSTATUS)){
-            System.out.println(this.getName() + " would have been burned. But it already has a status.");
+            if(displayPrompt) {
+                System.out.println(this.getName() + " would have been burned. But it already has a status.");
+            }
             return this;
         }
         else {
-            System.out.println(this.getName() + " is burned.");
+            if(displayPrompt) {
+                System.out.println(this.getName() + " is burned.");
+            }
             return this.addStatus(this, newStatus);
         }
     }
 
-    public Pokemon increaseStat(int scale, PokeStatType type) throws InvalidPokemonError, InvalidModifier {
-        Pokemon newPokemon = new Pokemon(this.type, this.name, this.getMoves(), this.status, this.stats.increaseStat(type, scale));
+    public Pokemon increaseStat(boolean displayPrompt, int scale, PokeStatType type) throws InvalidPokemonError, InvalidModifier {
+        Pokemon newPokemon = new Pokemon(this.type, this.name, this.getMoves(), this.status, this.stats.increaseStat(displayPrompt, type, scale));
 
         return newPokemon;
     }
 
-    public Pokemon decreaseStat(int scale, PokeStatType type) throws InvalidPokemonError, InvalidModifier {
-        Pokemon newPokemon = new Pokemon(this.type, this.name, this.getMoves(), this.status, this.stats.decreaseStat(type, scale));
+    public Pokemon decreaseStat(boolean displayPrompt, int scale, PokeStatType type) throws InvalidPokemonError, InvalidModifier {
+        Pokemon newPokemon = new Pokemon(this.type, this.name, this.getMoves(), this.status, this.stats.decreaseStat(displayPrompt, type, scale));
 
         return newPokemon;
     }
 
-    //Opportunity for AI here
-    //TODO
-    public PokeMove chooseMove(Pokemon defender){
-    	ExpectedMiniMax em = new ExpectedMiniMax();
-    	em.loadOptions(m, 3);
-        int nextMove = em.getMove();;
+    public PokeMove chooseMove(Match match, Pokemon defender, boolean playerA) throws InvalidModifier, InvalidPokemonError{//Probably should remove defender here
+        TreeNode root = new TreeNode(match);
 
-        return this.getMoves().get(nextMove);
+    	ExpectedMiniMax em = new ExpectedMiniMax(root);
+        //Construct tree
+    	ExpectedMiniMax expectedMiniMax = em.loadOptions(3);//We can change the depth of the tree later if need be
+        PokeMove nextMove = expectedMiniMax.getMove(match, playerA);
+
+        return nextMove;
     }
 
-    public AttackerDefenderPair attack(Pokemon defender, PokeMove move) throws InvalidPokemonError, InvalidModifier{
+    public AttackerDefenderPair attack(Pokemon defender, PokeMove move, boolean displayPrompt) throws InvalidPokemonError, InvalidModifier{
 
         if(this.status.getType().equals(PokeStatusType.PARALYSIS)){
             int paralyzed = this.ran.nextInt(4);
             if(paralyzed == 0){
-                System.out.println(this.getName() + " is paralyzed. It can't move.");
-                return new AttackerDefenderPair(this, defender);
+                if(displayPrompt){
+                    System.out.println(this.getName() + " is paralyzed. It can't move.");
+                }
+                return new AttackerDefenderPair(displayPrompt, this, defender);
             }
         }
         else if(this.status.getType().equals(PokeStatusType.SLEEP)){
             if(this.status.getCounter() <= 0) {
-                System.out.println(this.getName() + " woke up!");
+                if(displayPrompt) {
+                    System.out.println(this.getName() + " woke up!");
+                }
                 PokeStatus newStatus = new PokeStatus();
                 this.status = newStatus;
             }
             else {
-                System.out.println(this.getName() + " is asleep.");
+                if(displayPrompt) {
+                    System.out.println(this.getName() + " is asleep.");
+                }
                 PokeStatus newStatus = new PokeStatus(PokeStatusType.SLEEP, this.status.getCounter() - 1);
                 this.status = newStatus;
-                return new AttackerDefenderPair(this, defender);
+                return new AttackerDefenderPair(displayPrompt, this, defender);
             }
         }
 
@@ -193,11 +213,13 @@ public class Pokemon {
                 damage = 1;
             }
         }
-
-        System.out.println(this.getName()+" caused " + damage + " damage");
+        if(displayPrompt) {
+            System.out.println(this.getName() + " caused " + damage + " damage");
+        }
         PokeStat newHP = currentHP.damage(currentHP.getType(), damage);
-        System.out.println(defender.getName() + " now has " + newHP.getBase() +" health");
-
+        if(displayPrompt) {
+            System.out.println(defender.getName() + " now has " + newHP.getBase() + " health");
+        }
         PokeStats newDefenderStats =
                 new PokeStats(defender.stats.getAttack(), defender.stats.getDefense(), defender.stats.getSpecialAttack(),
                 defender.stats.getSpecialDefense(), defender.stats.getSpeed(), newHP);
@@ -205,7 +227,7 @@ public class Pokemon {
 
 
         //Below deals with an additional effect of a move
-        AttackerDefenderPair pair = effect.effect(this, newDefender);
+        AttackerDefenderPair pair = effect.effect(displayPrompt, this, newDefender);
 
         return pair;
     }
@@ -244,4 +266,8 @@ public class Pokemon {
 	public void setMoves(ArrayList<PokeMove> moves) {
 		this.moves = moves;
 	}
+
+	public PokeStatus getStatus(){
+	    return this.status;
+    }
 }

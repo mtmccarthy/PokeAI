@@ -27,9 +27,9 @@ public class IncreaseAttacker implements PokeEffect{
     }
 
     @Override
-    public AttackerDefenderPair effect(Pokemon attacker, Pokemon defender) throws InvalidPokemonError, InvalidModifier {
-        Pokemon newAttacker = attacker.increaseStat(this.scale, this.type);
+    public AttackerDefenderPair effect(boolean displayPrompt, Pokemon attacker, Pokemon defender) throws InvalidPokemonError, InvalidModifier {
+        Pokemon newAttacker = attacker.increaseStat(displayPrompt, this.scale, this.type);
 
-        return new AttackerDefenderPair(newAttacker, defender);
+        return new AttackerDefenderPair(displayPrompt, newAttacker, defender);
     }
 }

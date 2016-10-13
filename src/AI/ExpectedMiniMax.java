@@ -14,11 +14,16 @@ public class ExpectedMiniMax {
 	 * Edited by Jacob Link
 	 */
 
-	private TreeNode<PokeMove> root;
+	private TreeNode root;
+
+	public ExpectedMiniMax(TreeNode root){
+		this.root = root;
+	}
+
 
 	public Integer expectiminimax(TreeNode node, Integer depth) {
 		Integer alpha = 0;
-		if (depth ==0 || node.getData().valid() == false)
+		if (depth == 0 || node.getData().valid() == false)
 			return node.getData().getHeuristic();
 
 		if (node.getData().isPlayerAGoing == false) {
@@ -43,13 +48,16 @@ public class ExpectedMiniMax {
 			// return α
 		}
 
+
 		return alpha;
 	}
 
 	//builds tree, given depth and match state
-	public void loadOptions(Match m, int depth){
+	public ExpectedMiniMax loadOptions(int depth) throws InvalidModifier, InvalidPokemonError{
+		Match currentMatch = this.root.getData();
+
 		//make root node
-		TreeNode node = new TreeNode(null, m);
+		TreeNode node = new TreeNode(null, currentMatch);
 		
 		//currently can build up to depth 4
 		//not set up efficiently but should build out fully
@@ -89,10 +97,11 @@ public class ExpectedMiniMax {
 		}
 		
 		this.root = node;
+		return this;
 	}
 	
 	//build 4 children for a node
-	public void buildChildren(TreeNode node){
+	public void buildChildren(TreeNode node) throws InvalidModifier, InvalidPokemonError{
 		//build node for each possible move
 		//creates child as copy of current node, then runs move 0-3 on opposing pokemon
 		// in that node
@@ -120,6 +129,12 @@ public class ExpectedMiniMax {
 			//run move in child
 			for(int i=0;i<4;i++){
 				TreeNode child = (TreeNode) node.children.get(i);
+				Match childData = child.getData();
+				PokeMove attackingMove = childData.getCurrentA().getMoves().get(i);
+				Match resultingMatch = childData.evaluateMove(childData, true, attackingMove);
+				TreeNode newNode = new TreeNode(node.root, resultingMatch);
+				node.children.set(i, newNode);
+				/*
 				Pokemon a = child.data.getCurrentA();
 				Pokemon b = child.data.getCurrentB();
 				try {
@@ -133,12 +148,20 @@ public class ExpectedMiniMax {
 				}
 				child.data.setCurrentA(a);
 				child.data.setCurrentB(b);
+				*/
 			}
 		}
 		else{
 			//if player b is going, run b's moves
 			for(int i=0;i<4;i++){
 				TreeNode child = (TreeNode) node.children.get(i);
+				Match childData = child.getData();
+				PokeMove attackingMove = childData.getCurrentA().getMoves().get(i);
+				Match resultingMatch = childData.evaluateMove(childData, false, attackingMove);
+				TreeNode newNode = new TreeNode(node.root, resultingMatch);
+				node.children.set(i, newNode);
+
+				/*
 				Pokemon a = child.data.getCurrentA();
 				Pokemon b = child.data.getCurrentB();
 				try {
@@ -152,6 +175,7 @@ public class ExpectedMiniMax {
 				}
 				child.data.setCurrentA(a);
 				child.data.setCurrentB(b);
+				*/
 			}
 		}
 	}
@@ -159,10 +183,67 @@ public class ExpectedMiniMax {
 	//get move
 	//stubbed to choose randomly
 	//when implementing, base off of expected minimax value
-	public int getMove(){
-		
-		return (int) Math.random() * 4;
-	}
+	public PokeMove getMove(Match match, boolean playerA) throws InvalidModifier, InvalidPokemonError{
+
+		//Integer heuristic = expectiminimax(this.root, 3);
+
+		//Determine result of each move
+
+		Match result1;
+		Match result2;
+		Match result3;
+		Match result4;
+		PokeMove move1;
+		PokeMove move2;
+		PokeMove move3;
+		PokeMove move4;
+
+		Pokemon attacker;
+		if(playerA) {
+			attacker = match.getCurrentA();
+			move1 = attacker.getMoves().get(0);
+			move2 = attacker.getMoves().get(1);
+			move3 = attacker.getMoves().get(2);
+			move4 = attacker.getMoves().get(3);
+			result1 = match.evaluateMove(match, playerA, move1);
+			result2 = match.evaluateMove(match, playerA, move2);
+			result3 = match.evaluateMove(match, playerA, move3);
+			result4 = match.evaluateMove(match, playerA, move4);
+		}
+		else {
+			attacker = match.getCurrentB();
+			move1 = attacker.getMoves().get(0);
+			move2 = attacker.getMoves().get(1);
+			move3 = attacker.getMoves().get(2);
+			move4 = attacker.getMoves().get(3);
+			result1 = match.evaluateMove(match, !playerA, move1);
+			result2 = match.evaluateMove(match, !playerA, move2);
+			result3 = match.evaluateMove(match, !playerA, move3);
+			result4 = match.evaluateMove(match, !playerA, move4);
+		}
+			int heuristic1 = result1.getHeuristic();
+			System.out.println(attacker.getName() + " using " + move1.getName() + " would give heuristic " + heuristic1);
+			int heuristic2 = result2.getHeuristic();
+			System.out.println(attacker.getName() + " using " + move2.getName() + " would give heuristic " + heuristic2);
+			int heuristic3 = result3.getHeuristic();
+			System.out.println(attacker.getName() + " using " + move3.getName() + " would give heuristic " + heuristic3);
+			int heuristic4 = result4.getHeuristic();
+			System.out.println(attacker.getName() + " using " + move4.getName() + " would give heuristic " + heuristic4);
+
+			if(heuristic1 >= heuristic2 && heuristic1 >= heuristic3 && heuristic1 >= heuristic4) {
+				return move1;
+			}
+			else if(heuristic2 >= heuristic1 && heuristic2 >= heuristic3 && heuristic2 >= heuristic4) {
+				return move2;
+			}
+			else if(heuristic3 >= heuristic1 && heuristic3 >= heuristic2 && heuristic3 >= heuristic4) {
+				return move3;
+			}
+			else {
+				return move4;
+			}
+
+		}
 
 }
 

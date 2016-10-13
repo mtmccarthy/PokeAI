@@ -12,10 +12,10 @@ public class AttackerDefenderPair {
 
     boolean gameOn;
 
-    public AttackerDefenderPair(Pokemon attacker, Pokemon defender) {
+    public AttackerDefenderPair(boolean displayPrompt, Pokemon attacker, Pokemon defender) {
         this.attacker = attacker;
         this.defender = defender;
-        this.gameOn = this.isBattleOver().isGameOn();
+        this.gameOn = this.isBattleOver(displayPrompt).isGameOn();
     }
 
     public AttackerDefenderPair(Pokemon attacker, Pokemon defender, boolean gameOn) {
@@ -31,18 +31,22 @@ public class AttackerDefenderPair {
         return this.defender;
     }
 
-    public AttackerDefenderPair isBattleOver() {
+    public AttackerDefenderPair isBattleOver(boolean displayPrompt) {
 
         PokeStat HPAttacker = attacker.getStats().getHitPoints();
         PokeStat HPDefender = defender.getStats().getHitPoints();
 
 
         if(HPDefender.getBase() <= 0) {
-            System.out.println(defender.getName() + " has fainted.");
+            if(displayPrompt) {
+                System.out.println(defender.getName() + " has fainted.");
+            }
             return new AttackerDefenderPair(attacker, defender, false);
         }
         else if(HPAttacker.getBase() <= 0) {
-            System.out.println(attacker.getName() + " has fainted.");
+            if(displayPrompt) {
+                System.out.println(attacker.getName() + " has fainted.");
+            }
             return new AttackerDefenderPair(attacker, defender, false);
         }
         else {

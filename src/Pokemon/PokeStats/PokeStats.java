@@ -34,21 +34,21 @@ public class PokeStats {
         this.hitPoints = hitPoints;
     }
 
-    public PokeStats increaseStat(PokeStatType type, int scale) throws InvalidModifier{
+    public PokeStats increaseStat(boolean displayPrompt, PokeStatType type, int scale) throws InvalidModifier{
         if(type.equals(PokeStatType.ATTACK)) {
-            return new PokeStats(this.attack.incrementCounter(scale), this.defense, this.specialAttack, this.specialDefense, this.speed, this.hitPoints);
+            return new PokeStats(this.attack.incrementCounter(displayPrompt, scale), this.defense, this.specialAttack, this.specialDefense, this.speed, this.hitPoints);
         }
         else if(type.equals(PokeStatType.DEFENSE)) {
-            return new PokeStats(this.attack, this.defense.incrementCounter(scale), this.specialAttack, this.specialDefense, this.speed, this.hitPoints);
+            return new PokeStats(this.attack, this.defense.incrementCounter(displayPrompt, scale), this.specialAttack, this.specialDefense, this.speed, this.hitPoints);
         }
         else if(type.equals(PokeStatType.SPECIALATTACK)) {
-            return new PokeStats(this.attack, this.defense, this.specialAttack.incrementCounter(scale), this.specialDefense, this.speed, this.hitPoints);
+            return new PokeStats(this.attack, this.defense, this.specialAttack.incrementCounter(displayPrompt, scale), this.specialDefense, this.speed, this.hitPoints);
         }
         else if(type.equals(PokeStatType.SPECIALDEFENSE)) {
-            return new PokeStats(this.attack, this.defense, this.specialAttack, this.specialDefense.incrementCounter(scale), this.speed, this.hitPoints);
+            return new PokeStats(this.attack, this.defense, this.specialAttack, this.specialDefense.incrementCounter(displayPrompt, scale), this.speed, this.hitPoints);
         }
         else if(type.equals(PokeStatType.SPEED)) {
-            return new PokeStats(this.attack, this.defense, this.specialAttack, this.specialDefense, this.speed.incrementCounter(scale), this.hitPoints);
+            return new PokeStats(this.attack, this.defense, this.specialAttack, this.specialDefense, this.speed.incrementCounter(displayPrompt, scale), this.hitPoints);
         }
         else {
             //SHOULD WE ADD SOMETHING
@@ -56,21 +56,21 @@ public class PokeStats {
         }
     }
 
-    public PokeStats decreaseStat(PokeStatType type, int scale) throws InvalidModifier{
+    public PokeStats decreaseStat(boolean displayPrompt, PokeStatType type, int scale) throws InvalidModifier{
         if(type.equals(PokeStatType.ATTACK)) {
-            return new PokeStats(this.attack.decrementCounter(scale), this.defense, this.specialAttack, this.specialDefense, this.speed, this.hitPoints);
+            return new PokeStats(this.attack.decrementCounter(displayPrompt, scale), this.defense, this.specialAttack, this.specialDefense, this.speed, this.hitPoints);
         }
         else if(type.equals(PokeStatType.DEFENSE)) {
-            return new PokeStats(this.attack, this.defense.decrementCounter(scale), this.specialAttack, this.specialDefense, this.speed, this.hitPoints);
+            return new PokeStats(this.attack, this.defense.decrementCounter(displayPrompt, scale), this.specialAttack, this.specialDefense, this.speed, this.hitPoints);
         }
         else if(type.equals(PokeStatType.SPECIALATTACK)) {
-            return new PokeStats(this.attack, this.defense, this.specialAttack.decrementCounter(scale), this.specialDefense, this.speed, this.hitPoints);
+            return new PokeStats(this.attack, this.defense, this.specialAttack.decrementCounter(displayPrompt, scale), this.specialDefense, this.speed, this.hitPoints);
         }
         else if(type.equals(PokeStatType.SPECIALDEFENSE)) {
-            return new PokeStats(this.attack, this.defense, this.specialAttack, this.specialDefense.decrementCounter(scale), this.speed, this.hitPoints);
+            return new PokeStats(this.attack, this.defense, this.specialAttack, this.specialDefense.decrementCounter(displayPrompt, scale), this.speed, this.hitPoints);
         }
         else if(type.equals(PokeStatType.SPEED)) {
-            return new PokeStats(this.attack, this.defense, this.specialAttack, this.specialDefense, this.speed.decrementCounter(scale), this.hitPoints);
+            return new PokeStats(this.attack, this.defense, this.specialAttack, this.specialDefense, this.speed.decrementCounter(displayPrompt, scale), this.hitPoints);
         }
         else {
             //SHOULD WE ADD SOMETHING

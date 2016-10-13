@@ -4,9 +4,10 @@ import java.util.ArrayList;
 
 import Battle.Match;
 import PokeMove.PokeMove;
+
 /*
  * Created by Ben Bianchi 10/12/2016
- * TreeNode is just a datastructure we will use to compare nodes in a MINIMAX tree
+ * TreeNode is just a data structure we will use to compare nodes in a MINIMAX tree
  * This class does not drive anything, it is just a data structure.
  */
 
@@ -22,6 +23,11 @@ public class TreeNode<T>{
 	        this.data = data;
 	        this.children = new ArrayList<TreeNode>();
 	    }
+	    public TreeNode(Match data) {
+	    	this.root = null;
+			this.data = data;
+			this.children = new ArrayList<TreeNode>();
+		}
 
 	public Match getData()
 	{

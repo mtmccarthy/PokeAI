@@ -9,8 +9,8 @@ import Pokemon.AttackerDefenderPair;
  */
 public class NoEffect implements PokeEffect{
 
-    public AttackerDefenderPair effect(Pokemon attacker, Pokemon defender) {
+    public AttackerDefenderPair effect(boolean displayPrompt, Pokemon attacker, Pokemon defender) {
 
-        return new AttackerDefenderPair(attacker, defender);
+        return new AttackerDefenderPair(displayPrompt, attacker, defender);
     }
 }

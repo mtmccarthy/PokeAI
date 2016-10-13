@@ -17,7 +17,7 @@ public class PercentParalysis implements PokeEffect{
         this.percent = percent;
     }
     @Override
-    public AttackerDefenderPair effect(Pokemon attacker, Pokemon defender) throws InvalidPokemonError, InvalidModifier {
+    public AttackerDefenderPair effect(boolean displayPrompt, Pokemon attacker, Pokemon defender) throws InvalidPokemonError, InvalidModifier {
 
         int modulo = 100/ this.percent;
 
@@ -26,11 +26,11 @@ public class PercentParalysis implements PokeEffect{
         AttackerDefenderPair pair;
 
         if(rannum == 0) {
-            Pokemon newDefender = defender.paralyze();
-            pair = new AttackerDefenderPair(attacker, newDefender);
+            Pokemon newDefender = defender.paralyze(displayPrompt);
+            pair = new AttackerDefenderPair(displayPrompt, attacker, newDefender);
         }
         else {
-            pair = new AttackerDefenderPair(attacker, defender);
+            pair = new AttackerDefenderPair(displayPrompt, attacker, defender);
         }
 
 
