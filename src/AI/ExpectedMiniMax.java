@@ -222,13 +222,13 @@ public class ExpectedMiniMax {
 			result4 = match.evaluateMove(match, !playerA, move4);
 		}
 			int heuristic1 = result1.getHeuristic();
-			System.out.println(attacker.getName() + " using " + move1.getName() + " would give heuristic " + heuristic1);
+			System.out.println(attacker.getName() + " using " + move1.getName() + " would give heuristic " + heuristic1 + " with a hp " + result1.getCurrentA().getStats().getHitPoints().getBase() + " and b hp " + result1.getCurrentB().getStats().getHitPoints().getBase());
 			int heuristic2 = result2.getHeuristic();
-			System.out.println(attacker.getName() + " using " + move2.getName() + " would give heuristic " + heuristic2);
+			System.out.println(attacker.getName() + " using " + move2.getName() + " would give heuristic " + heuristic2 + " with a hp " + result2.getCurrentA().getStats().getHitPoints().getBase() + " and b hp " + result2.getCurrentB().getStats().getHitPoints().getBase());
 			int heuristic3 = result3.getHeuristic();
-			System.out.println(attacker.getName() + " using " + move3.getName() + " would give heuristic " + heuristic3);
+			System.out.println(attacker.getName() + " using " + move3.getName() + " would give heuristic " + heuristic3 + " with a hp " + result3.getCurrentA().getStats().getHitPoints().getBase() + " and b hp " + result3.getCurrentB().getStats().getHitPoints().getBase());
 			int heuristic4 = result4.getHeuristic();
-			System.out.println(attacker.getName() + " using " + move4.getName() + " would give heuristic " + heuristic4);
+			System.out.println(attacker.getName() + " using " + move4.getName() + " would give heuristic " + heuristic4 + " with a hp " + result4.getCurrentA().getStats().getHitPoints().getBase() + " and b hp " + result4.getCurrentB().getStats().getHitPoints().getBase());
 
 			if(heuristic1 >= heuristic2 && heuristic1 >= heuristic3 && heuristic1 >= heuristic4) {
 				return move1;
@@ -242,8 +242,6 @@ public class ExpectedMiniMax {
 			else {
 				return move4;
 			}
-
 		}
-
 }
 
