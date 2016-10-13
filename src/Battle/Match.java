@@ -1,23 +1,26 @@
 package Battle;
 
+import java.util.ArrayList;
+
 import PokeMove.PokeMove;
 import Pokemon.PokeStats.PokeStat;
+import Pokemon.PokeStatus.PokeStatusType;
 import Pokemon.Pokemon;
-
 import Error.InvalidModifier;
 import Error.InvalidPokemonError;
-
 import Pokemon.AttackerDefenderPair;
 
 /**
  * Created by mtmccarthy on 10/10/16.
+ * Edited by Jacob Link
  */
 public class Match {
-
+	
+	public boolean isPlayerAGoing;
     Trainer playerA;
     Trainer playerB;
 
-    Pokemon currentA;
+    private Pokemon currentA;
     Pokemon currentB;
 
     int currentAIndex;
@@ -28,13 +31,18 @@ public class Match {
     public Match(Trainer a, Trainer b) {
         this.playerA = a;
         this.playerB = b;
-        this.currentA = (Pokemon) this.playerA.getParty().get(0);
+        this.setCurrentA((Pokemon) this.playerA.getParty().get(0));
+        this.getCurrentA().m = this;
         this.currentB = (Pokemon) this.playerB.getParty().get(0);
-        this.currentA.setIndex(0);
+        this.currentB.m = this;
+        this.getCurrentA().setIndex(0);
         this.currentB.setIndex(0);
         this.currentAIndex = 0;
         this.currentBIndex = 0;
-
+        
+        //start off as true for ai calculations
+        this.isPlayerAGoing = true;
+        
         this.gameOn = true;
     }
 
@@ -47,16 +55,16 @@ public class Match {
         while(gameOn) {
             boolean changeA = false; //A new pokemon was sent out for playerA
             boolean changeB = false; //A new pokemon was sent out for playerB
-            AttackerDefenderPair pair = this.battle(currentA, currentB, playerA, playerB);
+            AttackerDefenderPair pair = this.battle(getCurrentA(), currentB, playerA, playerB);
             gameOn = pair.isGameOn();
-            currentA = pair.getAttacker();
+            setCurrentA(pair.getAttacker());
             currentB = pair.getDefender();
             if(!gameOn) {
 
-                if(currentA.getStats().getHitPoints().getBase() <= 0){
+                if(getCurrentA().getStats().getHitPoints().getBase() <= 0){
 
-                    playerA = playerA.setParty(playerA.currentPokemon, currentA);
-                    currentA = playerA.nextPokemon();
+                    playerA = playerA.setParty(playerA.currentPokemon, getCurrentA());
+                    setCurrentA(playerA.nextPokemon());
                     changeA = true;
 
                 }
@@ -66,11 +74,11 @@ public class Match {
                     currentB = playerB.nextPokemon();
                     changeB = true;
                 }
-                if(currentA == null && currentB == null) {
+                if(getCurrentA() == null && currentB == null) {
                     System.out.println("Game ended in a tie.");
                     return;
                 }
-                else if(currentA == null) {
+                else if(getCurrentA() == null) {
                     System.out.println("Player B won the game!");
                     return;
                 }
@@ -79,11 +87,13 @@ public class Match {
                     return;
                 }
                 else {
-                    currentAIndex = currentA.getIndex();
+                    currentAIndex = getCurrentA().getIndex();
+                    this.getCurrentA().m = this;
                     if(changeA){
-                        System.out.println("Player A sent out "+ currentA.getName() + " with index " + currentAIndex);
+                        System.out.println("Player A sent out "+ getCurrentA().getName() + " with index " + currentAIndex);
                     }
                     currentBIndex = currentB.getIndex();
+                    this.currentB.m = this;
                     if(changeB) {
                         System.out.println("Player B sent out "+ currentB.getName() + " with index " + currentBIndex);
                     }
@@ -103,8 +113,15 @@ public class Match {
         int speedA = (int) pokemonA.getStats().getSpeed().getModifiedStat();
         int speedB = (int) pokemonB.getStats().getSpeed().getModifiedStat();
 
-        PokeMove moveA = pokemonA.chooseMove(pokemonB);
-        PokeMove moveB = pokemonB.chooseMove(pokemonB);
+        //if(moveA == null) {
+            PokeMove moveA = pokemonA.chooseMove(this,pokemonB, true);
+        //}
+
+        //if(moveB == null){
+            PokeMove moveB = pokemonB.chooseMove(this,pokemonB, false);
+        //}
+
+
 
         if(speedA > speedB){
             System.out.println();
@@ -112,12 +129,12 @@ public class Match {
             System.out.println(pokemonA.getName() + " went first");
             System.out.println();
             System.out.println(pokemonA.getName() + " used " + moveA.getName());
-            AttackerDefenderPair pair = pokemonA.attack(pokemonB, moveA); //A attacks B
+            AttackerDefenderPair pair = pokemonA.attack(pokemonB, moveA, true); //A attacks B
             boolean keepGoing = pair.isGameOn();
 
             if(keepGoing) {
                 System.out.println(pokemonB.getName() + " used " + moveB.getName());
-                AttackerDefenderPair newPair = pair.getDefender().attack(pair.getAttacker(), moveB);
+                AttackerDefenderPair newPair = pair.getDefender().attack(pair.getAttacker(), moveB, true);
 
                 return new AttackerDefenderPair(newPair.getDefender(), newPair.getAttacker(), newPair.isGameOn());
             }
@@ -133,12 +150,12 @@ public class Match {
             System.out.println(pokemonB.getName() + " went first");
             System.out.println();
             System.out.println(pokemonB.getName() + " used " + moveB.getName());
-            AttackerDefenderPair pair = pokemonB.attack(pokemonA, moveB); //A attacks B
+            AttackerDefenderPair pair = pokemonB.attack(pokemonA, moveB, true); //A attacks B
             boolean keepGoing = pair.isGameOn();
 
             if(keepGoing) {
                 System.out.println(pokemonA.getName() + " used " + moveA.getName());
-                AttackerDefenderPair newPair = pair.getDefender().attack(pair.getAttacker(), moveA);
+                AttackerDefenderPair newPair = pair.getDefender().attack(pair.getAttacker(), moveA, true);
                 return new AttackerDefenderPair(newPair.getAttacker(), newPair.getDefender(), newPair.isGameOn());
             }
             else {
@@ -154,12 +171,12 @@ public class Match {
                 System.out.println(pokemonA.getName() + " went first");
                 System.out.println();
                 System.out.println(pokemonA.getName() + " used " + moveA.getName());
-                AttackerDefenderPair pair = pokemonA.attack(pokemonB, moveA); //A attacks B
+                AttackerDefenderPair pair = pokemonA.attack(pokemonB, moveA, true); //A attacks B
                 boolean keepGoing = pair.isGameOn();
 
                 if(keepGoing) {
                     System.out.println(pokemonB.getName() + " used " + moveB.getName());
-                    AttackerDefenderPair newPair = pair.getDefender().attack(pair.getAttacker(), moveB);
+                    AttackerDefenderPair newPair = pair.getDefender().attack(pair.getAttacker(), moveB, true);
                     return new AttackerDefenderPair(newPair.getDefender(), newPair.getAttacker(), newPair.isGameOn());
                 }
                 else {
@@ -169,12 +186,12 @@ public class Match {
             else {
                 System.out.println(pokemonB.getName() + " went first");
                 System.out.println(pokemonB.getName() + " used " + moveB.getName());
-                AttackerDefenderPair pair = pokemonB.attack(pokemonA, moveB); //A attacks B
+                AttackerDefenderPair pair = pokemonB.attack(pokemonA, moveB, true); //A attacks B
                 boolean keepGoing = pair.isGameOn();
 
                 if(keepGoing) {
                     System.out.println(pokemonA.getName() + " used " + moveA.getName());
-                    AttackerDefenderPair newPair = pair.getDefender().attack(pair.getAttacker(), moveA);
+                    AttackerDefenderPair newPair = pair.getDefender().attack(pair.getAttacker(), moveA, true);
                     return new AttackerDefenderPair(newPair.getAttacker(), newPair.getDefender(), newPair.isGameOn());
                 }
                 else {
@@ -183,4 +200,107 @@ public class Match {
             }
         }
     }
+
+
+
+    public Match evaluateMove(Match match, boolean playerA, PokeMove move) throws InvalidModifier, InvalidPokemonError{
+            Trainer trainerA = match.playerA;
+            Trainer trainerB = match.playerB;
+
+            AttackerDefenderPair newPair;
+
+            if(playerA){
+                newPair = match.getCurrentA().attack(match.getCurrentB(), move, false);
+            }
+            else {
+                newPair = match.getCurrentB().attack(match.getCurrentA(), move, false);
+            }
+
+            //Add ability to battle with chosen moves
+
+            trainerA.setParty(0, newPair.getAttacker());
+            trainerB.setParty(0, newPair.getDefender());
+
+            Match newMatch = new Match(trainerA, trainerB);
+            return newMatch;
+
+
+    }
+
+	public Integer getHeuristic() {
+		ArrayList<Pokemon> pokelist; 
+		int heuristic = 0;
+		
+		if (isPlayerAGoing==true){
+			//if a is going, heuristic is health of a's pokemon - health of b's pokemon
+			for(int i = 0; i < playerA.currentPokemon; i++){
+				//set pokelist to our pokemon
+				pokelist = playerA.getParty();
+				//add to heuristic for our pokemon's hp
+                Pokemon thisPoke = pokelist.get(i);
+				heuristic = heuristic + thisPoke.getStats().getHitPoints().getBase();
+                if(!thisPoke.getStatus().getType().equals(PokeStatusType.NOSTATUS)) {
+                    heuristic = heuristic - 5;
+                }
+                for(int j = 0; j< playerB.currentPokemon; j++) {
+                    Pokemon opposingPoke = (Pokemon) playerB.getParty().get(j);
+                    heuristic = heuristic - opposingPoke.getStats().getHitPoints().getBase();
+                    if(!opposingPoke.getStatus().getType().equals(PokeStatusType.NOSTATUS)){
+                        heuristic = heuristic + 5;
+                    }
+                }
+			}
+			for(int i = 0; i < playerB.currentPokemon; i++){
+			    //Should be flipped because player B wants to minimize
+				//set pokelist to enemy's pokemon
+				pokelist = playerB.getParty();
+				//subtract from heuristic for their hp
+                Pokemon thisPoke = pokelist.get(i);
+                heuristic = heuristic - thisPoke.getStats().getHitPoints().getBase();
+                if(!thisPoke.getStatus().getType().equals(PokeStatusType.NOSTATUS)) {
+                    heuristic = heuristic + 5;
+                }
+                for(int j = 0; j< playerA.currentPokemon; j++) {
+                    Pokemon opposingPoke = (Pokemon) playerA.getParty().get(j);
+                    heuristic = heuristic + opposingPoke.getStats().getHitPoints().getBase();
+                    if(!opposingPoke.getStatus().getType().equals(PokeStatusType.NOSTATUS)){
+                        heuristic = heuristic - 5;
+                    }
+                }
+			}
+		}
+		else{
+			//if b is going, heuristic is opposite
+			for(int i = 0; i<playerA.currentPokemon; i++){
+				//set pokelist to enemy's pokemon
+				pokelist = playerA.getParty();
+				//subtract from heuristic for their pokemon's hp
+				heuristic = heuristic - pokelist.get(i).getStats().getHitPoints().getBase();
+			}
+			for(int i = 0; i<playerB.currentPokemon; i++){
+				//set pokelist to our pokemon
+				pokelist = playerB.getParty();
+				//add to heuristic for our pokemon's hp
+				heuristic = heuristic + pokelist.get(i).getStats().getHitPoints().getBase();
+			}
+		}
+		
+		return heuristic;
+	}
+
+	public Pokemon getCurrentA() {
+		return currentA;
+	}
+
+	public void setCurrentA(Pokemon A) {
+		this.currentA = A;
+	}
+
+	public Pokemon getCurrentB() {
+		return currentB;
+	}
+	
+	public void setCurrentB(Pokemon B){
+		this.currentB = B;
+	}
 }

@@ -13,7 +13,7 @@ import Error.InvalidModifier;
 public interface PokeEffect {
 
 
-    public AttackerDefenderPair effect(Pokemon attacker, Pokemon defender) throws InvalidPokemonError, InvalidModifier;
+    public AttackerDefenderPair effect(boolean displayPrompt, Pokemon attacker, Pokemon defender) throws InvalidPokemonError, InvalidModifier;
 
 
 }

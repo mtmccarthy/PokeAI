@@ -26,9 +26,9 @@ public class DecreaseOpponent implements PokeEffect{
     }
 
     @Override
-    public AttackerDefenderPair effect(Pokemon attacker, Pokemon defender) throws InvalidPokemonError, InvalidModifier {
-        Pokemon newDefender = defender.decreaseStat(this.scale, this.type);
+    public AttackerDefenderPair effect(boolean displayPrompt, Pokemon attacker, Pokemon defender) throws InvalidPokemonError, InvalidModifier {
+        Pokemon newDefender = defender.decreaseStat(displayPrompt, this.scale, this.type);
 
-        return new AttackerDefenderPair(attacker, newDefender);
+        return new AttackerDefenderPair(displayPrompt,attacker, newDefender);
     }
 }

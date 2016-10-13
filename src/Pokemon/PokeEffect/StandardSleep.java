@@ -13,10 +13,10 @@ public class StandardSleep implements PokeEffect{
 
 
     @Override
-    public AttackerDefenderPair effect(Pokemon attacker, Pokemon defender) throws InvalidPokemonError, InvalidModifier{
-        Pokemon newDefender = defender.normalSleep();
+    public AttackerDefenderPair effect(boolean displayPrompt, Pokemon attacker, Pokemon defender) throws InvalidPokemonError, InvalidModifier{
+        Pokemon newDefender = defender.normalSleep(displayPrompt);
 
-        return new AttackerDefenderPair(attacker, newDefender);
+        return new AttackerDefenderPair(displayPrompt, attacker, newDefender);
     }
 
 }
