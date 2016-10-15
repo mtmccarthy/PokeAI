@@ -230,60 +230,56 @@ public class Match {
 	public Integer getHeuristic() {
 		ArrayList<Pokemon> pokelist; 
 		int heuristic = 0;
-		
-		if (isPlayerAGoing==true){
+		int atotal = 0;
+		int btotal = 0; 
+		/*
+		if (this.isPlayerAGoing==true){
 			//if a is going, heuristic is health of a's pokemon - health of b's pokemon
-			for(int i = 0; i < playerA.currentPokemon; i++){
+			for(int i = 0; i < this.playerA.currentPokemon; i++){
 				//set pokelist to our pokemon
-				pokelist = playerA.getParty();
+				pokelist = this.playerA.getParty();
 				//add to heuristic for our pokemon's hp
                 Pokemon thisPoke = pokelist.get(i);
 				heuristic = heuristic + thisPoke.getStats().getHitPoints().getBase();
+				atotal = atotal + thisPoke.getStats().getHitPoints().getBase();
                 if(!thisPoke.getStatus().getType().equals(PokeStatusType.NOSTATUS)) {
                     heuristic = heuristic - 5;
-                }
-                for(int j = 0; j< playerB.currentPokemon; j++) {
-                    Pokemon opposingPoke = (Pokemon) playerB.getParty().get(j);
-                    heuristic = heuristic - opposingPoke.getStats().getHitPoints().getBase();
-                    if(!opposingPoke.getStatus().getType().equals(PokeStatusType.NOSTATUS)){
-                        heuristic = heuristic + 5;
-                    }
-                }
+                } 
 			}
-			for(int i = 0; i < playerB.currentPokemon; i++){
+			for(int j = 0; j< this.playerB.currentPokemon; j++) {
+                Pokemon opposingPoke = (Pokemon) this.playerB.getParty().get(j);
+                heuristic = heuristic - opposingPoke.getStats().getHitPoints().getBase();
+                btotal = btotal + opposingPoke.getStats().getHitPoints().getBase();
+                if(!opposingPoke.getStatus().getType().equals(PokeStatusType.NOSTATUS)){
+                    heuristic = heuristic + 5;
+                }
+            }
+			System.out.println("A side heuristic: " + heuristic);
+			System.out.println("A total hp: " + atotal + " B total hp: " + btotal);
+		}
+		else{
+			for(int i = 0; i < this.playerB.currentPokemon; i++){
 			    //Should be flipped because player B wants to minimize
 				//set pokelist to enemy's pokemon
-				pokelist = playerB.getParty();
+				pokelist = this.playerB.getParty();
 				//subtract from heuristic for their hp
                 Pokemon thisPoke = pokelist.get(i);
                 heuristic = heuristic - thisPoke.getStats().getHitPoints().getBase();
                 if(!thisPoke.getStatus().getType().equals(PokeStatusType.NOSTATUS)) {
                     heuristic = heuristic + 5;
                 }
-                for(int j = 0; j< playerA.currentPokemon; j++) {
-                    Pokemon opposingPoke = (Pokemon) playerA.getParty().get(j);
-                    heuristic = heuristic + opposingPoke.getStats().getHitPoints().getBase();
-                    if(!opposingPoke.getStatus().getType().equals(PokeStatusType.NOSTATUS)){
-                        heuristic = heuristic - 5;
-                    }
+			}
+			for(int j = 0; j< this.playerA.currentPokemon; j++) {
+                Pokemon opposingPoke = (Pokemon) this.playerA.getParty().get(j);
+                heuristic = heuristic + opposingPoke.getStats().getHitPoints().getBase();
+                if(!opposingPoke.getStatus().getType().equals(PokeStatusType.NOSTATUS)){
+                    heuristic = heuristic - 5;
                 }
-			}
-		}
-		else{
-			//if b is going, heuristic is opposite
-			for(int i = 0; i<playerA.currentPokemon; i++){
-				//set pokelist to enemy's pokemon
-				pokelist = playerA.getParty();
-				//subtract from heuristic for their pokemon's hp
-				heuristic = heuristic - pokelist.get(i).getStats().getHitPoints().getBase();
-			}
-			for(int i = 0; i<playerB.currentPokemon; i++){
-				//set pokelist to our pokemon
-				pokelist = playerB.getParty();
-				//add to heuristic for our pokemon's hp
-				heuristic = heuristic + pokelist.get(i).getStats().getHitPoints().getBase();
-			}
-		}
+            }
+			System.out.println("B side heuristic: " + heuristic);
+		}*/
+		
+		heuristic = this.getCurrentA().getStats().getHitPoints().getBase() - this.getCurrentB().getStats().getHitPoints().getBase();
 		
 		return heuristic;
 	}
