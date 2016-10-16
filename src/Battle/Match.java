@@ -17,8 +17,8 @@ import Pokemon.AttackerDefenderPair;
 public class Match {
 	
 	public boolean isPlayerAGoing;
-    Trainer playerA;
-    Trainer playerB;
+    public Trainer playerA;
+    public Trainer playerB;
 
     private Pokemon currentA;
     Pokemon currentB;
@@ -27,6 +27,9 @@ public class Match {
     int currentBIndex;
 
     boolean gameOn; //True if both players have at least one pokemon with some health
+	private PokeMove lastMove;
+	private Integer alpha;
+	public Pokemon activePokeMon;
 
     public Match(Trainer a, Trainer b) {
         this.playerA = a;
@@ -46,7 +49,8 @@ public class Match {
         this.gameOn = true;
     }
 
-    public boolean valid(){
+
+	public boolean valid(){
         return playerA.valid() && playerB.valid();
     }
 
@@ -114,11 +118,14 @@ public class Match {
         int speedB = (int) pokemonB.getStats().getSpeed().getModifiedStat();
 
         //if(moveA == null) {
-            PokeMove moveA = pokemonA.chooseMove(this,pokemonB, true);
+        this.isPlayerAGoing = true;
+            PokeMove moveA = pokemonA.chooseMove(this,pokemonB);
+            
         //}
 
         //if(moveB == null){
-            PokeMove moveB = pokemonB.chooseMove(this,pokemonB, false);
+            this.isPlayerAGoing = false;
+            PokeMove moveB = pokemonB.chooseMove(this,pokemonA);
         //}
 
 
@@ -208,7 +215,7 @@ public class Match {
             Trainer trainerB = match.playerB;
 
             AttackerDefenderPair newPair;
-
+            Integer oldH = match.getHeuristic(playerA);
             if(playerA){
                 newPair = match.getCurrentA().attack(match.getCurrentB(), move, false);
             }
@@ -221,17 +228,59 @@ public class Match {
             trainerA.setParty(0, newPair.getAttacker());
             trainerB.setParty(0, newPair.getDefender());
 
+            
             Match newMatch = new Match(trainerA, trainerB);
+            newMatch.lastMove = move;
+            newMatch.alpha = newMatch.getHeuristic(newMatch.isPlayerAGoing); 
+            System.out.println("Using Move "+move.getName()+", old h:"+newMatch.alpha+" vs "+oldH);
             return newMatch;
 
 
     }
+    
+    public Match evaluateMove(Match match, boolean playerA, Integer move) throws InvalidModifier, InvalidPokemonError{
+        Trainer trainerA = match.playerA;
+        Trainer trainerB = match.playerB;
 
-	public Integer getHeuristic() {
-		ArrayList<Pokemon> pokelist; 
+        AttackerDefenderPair newPair;
+        Integer oldH = match.getHeuristic(playerA);
+        PokeMove lm = null;
+        if(playerA){
+        	PokeMove m = match.getCurrentA().getMoves().get(move);
+        	lm = m;
+            newPair = match.getCurrentA().attack(match.getCurrentB(), m, false);
+//            System.out.println(match.getCurrentA().getName()+" is considering using "+m.getName());
+            
+            
+        }
+        else {
+        	PokeMove m = match.getCurrentB().getMoves().get(move);
+        	lm = m;
+            newPair = match.getCurrentB().attack(match.getCurrentA(), m, false);
+            System.out.println(match.getCurrentB().getName()+" is considering using "+m.getName());
+        }
+
+        //Add ability to battle with chosen moves
+
+        trainerA.setParty(0, newPair.getAttacker());
+        trainerB.setParty(0, newPair.getDefender());
+        
+        
+        Match newMatch = new Match(trainerA, trainerB);
+        newMatch.lastMove = lm;
+        newMatch.alpha = newMatch.getHeuristic(newMatch.isPlayerAGoing); 
+        System.out.println("Using Move "+lm.getName()+", old h:"+newMatch.alpha+" vs "+match.getHeuristic(match.isPlayerAGoing));
+        return newMatch;
+
+
+}
+    
+    
+
+	public Integer getHeuristic(boolean playerA) {
 		int heuristic = 0;
-		int atotal = 0;
-		int btotal = 0; 
+		int aSum = 0;
+		int bSum = 0; 
 		/*
 		if (this.isPlayerAGoing==true){
 			//if a is going, heuristic is health of a's pokemon - health of b's pokemon
@@ -279,8 +328,36 @@ public class Match {
 			System.out.println("B side heuristic: " + heuristic);
 		}*/
 		
-		heuristic = this.getCurrentA().getStats().getHitPoints().getBase() - this.getCurrentB().getStats().getHitPoints().getBase();
 		
+			for (Pokemon p: this.playerA.pokemon)
+			{
+				if (p.getName() == this.currentA.getName())
+					aSum += this.currentA.getStats().getHitPoints().getBase();
+				else
+					aSum += p.getStats().getHitPoints().getBase();
+				
+				if (p.getStatus().getType() != PokeStatusType.NOSTATUS)
+					aSum -= 1;
+			}
+			
+		
+			for (Pokemon p: this.playerB.pokemon)
+			{
+				if (p.getName() == this.currentB.getName())
+					bSum += this.currentB.getStats().getHitPoints().getBase();
+				else
+					bSum += p.getStats().getHitPoints().getBase();
+				
+				if (p.getStatus().getType() != PokeStatusType.NOSTATUS)
+					bSum -= 1;
+				
+			}
+			
+			if (!isPlayerAGoing)
+				heuristic = aSum;
+			else
+				heuristic = bSum;
+			
 		return heuristic;
 	}
 
@@ -298,5 +375,17 @@ public class Match {
 	
 	public void setCurrentB(Pokemon B){
 		this.currentB = B;
+	}
+	public PokeMove getLastMove(){
+		return this.lastMove;
+	}
+
+	public void setInheritedHeuristic(Integer alpha) {
+		this.alpha = alpha;
+		
+	}
+	public Integer getInheritedHeuristic()
+	{
+		return alpha;
 	}
 }

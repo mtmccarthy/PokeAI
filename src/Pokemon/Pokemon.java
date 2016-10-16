@@ -150,17 +150,93 @@ public class Pokemon {
         return newPokemon;
     }
 
-    public PokeMove chooseMove(Match match, Pokemon defender, boolean playerA) throws InvalidModifier, InvalidPokemonError{//Probably should remove defender here
+    public PokeMove chooseMove(Match match, Pokemon defender) throws InvalidModifier, InvalidPokemonError{//Probably should remove defender here
+    	match.activePokeMon = this;
         TreeNode root = new TreeNode(match);
 
     	ExpectedMiniMax em = new ExpectedMiniMax(root);
         //Construct tree
-    	ExpectedMiniMax expectedMiniMax = em.loadOptions(3);//We can change the depth of the tree later if need be
-        PokeMove nextMove = expectedMiniMax.getMove(match, playerA);
+    	em.loadOptions(0,this);//We can change the depth of the tree later if need be
+        PokeMove nextMove = em.getMove(0);
 
         return nextMove;
     }
 
+    public AttackerDefenderPair attack(AttackerDefenderPair adp, Integer moveindex, boolean displayPrompt) throws InvalidPokemonError, InvalidModifier{
+
+    	PokeMove move = adp.getAttacker().getMoves().get(moveindex);
+    	
+        if(this.status.getType().equals(PokeStatusType.PARALYSIS)){
+            int paralyzed = this.ran.nextInt(4);
+            if(paralyzed == 0){
+                if(displayPrompt){
+                    System.out.println(this.getName() + " is paralyzed. It can't move.");
+                }
+                return new AttackerDefenderPair(displayPrompt, this, adp.getDefender());
+            }
+        }
+        else if(this.status.getType().equals(PokeStatusType.SLEEP)){
+            if(this.status.getCounter() <= 0) {
+                if(displayPrompt) {
+                    System.out.println(this.getName() + " woke up!");
+                }
+                PokeStatus newStatus = new PokeStatus();
+                this.status = newStatus;
+            }
+            else {
+                if(displayPrompt) {
+                    System.out.println(this.getName() + " is asleep.");
+                }
+                PokeStatus newStatus = new PokeStatus(PokeStatusType.SLEEP, this.status.getCounter() - 1);
+                this.status = newStatus;
+                return new AttackerDefenderPair(displayPrompt, this, adp.getDefender());
+            }
+        }
+
+        PokeEffect effect = move.getEffect();
+
+
+        //Below deals with damage portion of an attack
+        PokeStat currentHP = adp.getDefender().stats.getHitPoints();
+        double modifer = adp.getDefender().getModifier(move.getType());
+        //http://bulbapedia.bulbagarden.net/wiki/Damage
+        //Set level constant to 5 for simplicity
+        int damage;
+        if(move.getDamage() == 0){
+            damage = 0;
+        }
+        else {
+            int level = 5;
+            double interMediateDamage1 = (2*level+10)/250;
+            double interMediateDamage2 = (this.stats.getAttack().getModifiedStat()/adp.getDefender().stats.getDefense().getModifiedStat())*move.getDamage();
+            double interMediateDamage3 = (interMediateDamage1*interMediateDamage2 + 2)*modifer;
+            //Damage must be an integer
+            damage = (int) interMediateDamage3;
+            if(damage == 0){
+                damage = 1;
+            }
+        }
+        if(displayPrompt) {
+            System.out.println(this.getName() + " caused " + damage + " damage");
+        }
+        PokeStat newHP = currentHP.damage(currentHP.getType(), damage);
+        if(displayPrompt) {
+            System.out.println(adp.getDefender().getName() + " now has " + newHP.getBase() + " health");
+        }
+        PokeStats newDefenderStats =
+                new PokeStats(adp.getDefender().stats.getAttack(), adp.getDefender().stats.getDefense(), adp.getDefender().stats.getSpecialAttack(),
+                	adp.getDefender().stats.getSpecialDefense(), adp.getDefender().stats.getSpeed(), newHP);
+        Pokemon newDefender = new Pokemon(adp.getDefender().type, adp.getDefender().name, adp.getDefender().getMoves(), adp.getDefender().status, newDefenderStats);
+
+
+        //Below deals with an additional effect of a move
+        AttackerDefenderPair pair = effect.effect(displayPrompt, this, newDefender);
+
+        return pair;
+    }
+
+
+    
     public AttackerDefenderPair attack(Pokemon defender, PokeMove move, boolean displayPrompt) throws InvalidPokemonError, InvalidModifier{
 
         if(this.status.getType().equals(PokeStatusType.PARALYSIS)){

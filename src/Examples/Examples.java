@@ -50,10 +50,10 @@ public class Examples {
         //Stats
 
         //CharmanderStats
-        PokeStats charmanderStats = new PokeStats(52, 43, 60, 50, 65, 39);
-        PokeStats squirtleStats = new PokeStats(48, 65, 50, 64, 43, 44);
+        PokeStats charmanderStats = new PokeStats(52, 43, 60, 50, 65, 45);
+        PokeStats squirtleStats = new PokeStats(48, 65, 50, 64, 43, 45);
         PokeStats bulbasaurStats = new PokeStats(49, 49, 65, 65, 45, 45);
-        PokeStats pikachuStats = new PokeStats(55, 30, 50, 40, 90, 35);
+        PokeStats pikachuStats = new PokeStats(55, 30, 50, 40, 90, 45);
 
         //STATUS
         //Regular
@@ -74,7 +74,7 @@ public class Examples {
         charmanderMoves.add(new PMGrowl());
         charmanderMoves.add(new PMTailWhip());
 
-        PokeStats charmanderStats = new PokeStats(52, 43, 60, 50, 65, 39);
+        PokeStats charmanderStats = new PokeStats(52, 43, 60, 50, 65, 45);
 
         PokeStatus noStatus = new PokeStatus();
 
@@ -91,7 +91,7 @@ public class Examples {
         squirtleMoves.add(new PMBubble());
         squirtleMoves.add(new PMGrowl());
 
-        PokeStats squirtleStats = new PokeStats(48, 65, 50, 64, 43, 44);
+        PokeStats squirtleStats = new PokeStats(48, 65, 50, 64, 43, 45);
 
         PokeStatus noStatus = new PokeStatus();
 
@@ -125,7 +125,7 @@ public class Examples {
         pikachuMoves.add(new PMDefenseCurl());
         pikachuMoves.add(new PMGrowl());
 
-        PokeStats pikachuStats = new PokeStats(55, 30, 50, 40, 90, 35);
+        PokeStats pikachuStats = new PokeStats(55, 30, 50, 40, 90, 45);
 
         PokeStatus noStatus = new PokeStatus();
         Pokemon pikachu = new Pokemon(PokeType.ELECTRIC, "Pikachu", pikachuMoves, noStatus, pikachuStats);
